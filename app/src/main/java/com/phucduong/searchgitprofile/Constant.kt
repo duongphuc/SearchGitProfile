@@ -1,6 +1,6 @@
 package com.phucduong.searchgitprofile
 
 object Constant {
-    const val USER_APP_ID = "60c6fbeb4b93ac653c492ba806fc346d"
+    const val DEFAULT_RESULT_PER_PAGE = 10
     const val PREFERENCES = "Preference"
 }

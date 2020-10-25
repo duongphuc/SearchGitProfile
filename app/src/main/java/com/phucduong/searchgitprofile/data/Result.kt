@@ -22,11 +22,6 @@ import java.io.IOException
 sealed class Result<out R> {
     data class Success<out T>(val data: T) : Result<T>()
     data class Error(val errorResponse: ErrorResponse?) : Result<Nothing>()
-    data class NetWorkError(val exception: IOException, val msg: String = "Network Error") :
-        Result<Nothing>()
-
-    data class UnKnowError(
-        val throwable: Throwable,
-        val msg: String = "Something when wrong, please try again later"
-    ) : Result<Nothing>()
+    data class NetWorkError(val exception: IOException) : Result<Nothing>()
+    data class UnKnowError(val throwable: Throwable) : Result<Nothing>()
 }

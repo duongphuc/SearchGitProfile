@@ -4,38 +4,40 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import com.phucduong.searchgitprofile.data.local.User
-import com.phucduong.searchgitprofile.data.remote.model.WeatherResponse
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
+import com.phucduong.searchgitprofile.R
+import com.phucduong.searchgitprofile.data.Result
+import com.phucduong.searchgitprofile.data.model.User
+import com.phucduong.searchgitprofile.data.model.UserProfile
+import com.phucduong.searchgitprofile.data.remote.model.SearchListResponse
+import com.phucduong.searchgitprofile.data.remote.model.UserProfileResponse
 
-fun AppCompatActivity.replaceFragment(fragment: Fragment, framId: Int) =
-    supportFragmentManager.transact {
-        replace(framId, fragment)
-    }
-
-fun WeatherResponse.mapToListWeather(keyword: String): List<User> {
+fun SearchListResponse.mapToListUser(query: String): List<User> {
     val listResult = ArrayList<User>()
-    for (info in list) {
-        val weather = User(
-            city.name, info.dt.getDate(), info.humidity, info.pressure, info.temp.day.toInt(),
-            info.weather[0].description, keyword
+    for (item in items) {
+        val user = User(
+            item.login, item.avatar_url, item.id, item.url, item.type,
+            item.score, query
         )
-        listResult.add(weather)
+        listResult.add(user)
     }
     return listResult
 }
 
-fun Long.getDate(dateFormat: String = "EEE, d MMM yyyy"): String {
-    val date = Date(this * 1000)
-    val sdf = SimpleDateFormat(dateFormat, Locale.getDefault())
-    sdf.timeZone = TimeZone.getDefault()
-    return sdf.format(date)
+fun UserProfileResponse.mapToUserProfile(): UserProfile {
+    return UserProfile(
+        followers,
+        avatar_url,
+        following,
+        name ?: "",
+        company ?: "",
+        location ?: "",
+        login ?: "",
+        email ?: ""
+    )
 }
 
 private inline fun FragmentManager.transact(action: FragmentTransaction.() -> Unit) =
@@ -45,5 +47,20 @@ fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
+
+fun Context.showToast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+}
+
+fun Fragment.handleError(error: Any) {
+    when (error) {
+        is Result.Error -> activity?.showToast(
+            error.errorResponse?.message ?: getString(R.string.something_went_wrong)
+        )
+        is Result.NetWorkError -> activity?.showToast(getString(R.string.network_error))
+        is Result.UnKnowError -> activity?.showToast(getString(R.string.something_went_wrong))
+    }
+}
+
 
 

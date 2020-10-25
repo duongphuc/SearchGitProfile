@@ -1,13 +1,9 @@
 package com.phucduong.searchgitprofile.data
 
-import com.phucduong.searchgitprofile.data.local.User
+import com.phucduong.searchgitprofile.data.model.User
+import com.phucduong.searchgitprofile.data.model.UserProfile
 
 interface RemoteDataSource {
-    suspend fun getUserListByKeyword(keyword: String): Result<List<User>>
-}
-
-interface LocalDataSource {
-    suspend fun getUserListByKeyword(keyword: String): Result<List<User>>
-    suspend fun saveUserList(listUser: List<User>)
-    suspend fun clearData()
+    suspend fun searchUser(keyword: String, page: Int): Result<List<User>>
+    suspend fun getUserProfile(userLoginName: String): Result<UserProfile>
 }

@@ -3,56 +3,61 @@ package com.phucduong.searchgitprofile.viewmodel
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.phucduong.searchgitprofile.data.Repository
-import com.phucduong.searchgitprofile.data.local.User
+import com.phucduong.searchgitprofile.data.Result
+import com.phucduong.searchgitprofile.data.model.User
+import com.phucduong.searchgitprofile.util.SingleLiveEvent
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.collections.ArrayList
 
 class SearchUserViewModel @ViewModelInject constructor(
-    private val UserRepository: Repository
+    private val userRepository: Repository
 ) : ViewModel() {
     // Two-way databinding, exposing MutableLiveData
     val searchKeyWord = MutableLiveData<String>()
     val loading = MutableLiveData<Boolean>()
-    val errorText = MutableLiveData<String>()
 
-    private val _listUserInfo = MutableLiveData<List<User>>().apply { value = emptyList() }
-    val listUser: LiveData<List<User>>
+    private var searchJob: Job? = null
+    private val delaySearch: Long = 500L
+    private var pageNumber = 1
+    private val currentList = ArrayList<User>()
+    private val _listUserInfo: MutableLiveData<ArrayList<User>> = MutableLiveData(ArrayList())
+    val listUser: LiveData<ArrayList<User>>
         get() = _listUserInfo
 
-    //Used below code for observe searchKeyword value change
+    private val _error = SingleLiveEvent<Any>()
+    val error: LiveData<Any>
+        get() = _error
+
     private val mediator = MediatorLiveData<String>().apply {
         addSource(searchKeyWord) { value ->
             setValue(value)
-            //getUserWithCurrentKeyword()
+            loading.value = true
+            pageNumber = 1
+            searchUserWithQuery()
         }
     }.also { it.observeForever() { /* empty */ } }
 
-    fun getUserWithCurrentKeyword() {
-        loading.value = true
-        viewModelScope.launch {
-            val result = UserRepository.getUserListByKeyword(
+    fun searchUserWithQuery() {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(delaySearch)
+            if (pageNumber == 1) {
+                currentList.clear()
+            }
+            val result = userRepository.searchUser(
                 searchKeyWord.value?.trim()?.toLowerCase(
                     Locale.getDefault()
-                ) ?: ""
+                ) ?: "", pageNumber++
             )
             loading.value = false
-            when (result) {
-                is com.phucduong.searchgitprofile.data.Result.Success -> bindData(result.data, "")
-                is com.phucduong.searchgitprofile.data.Result.Error -> bindData(emptyList(), result.errorResponse?.message)
-                is com.phucduong.searchgitprofile.data.Result.NetWorkError -> bindData(emptyList(), result.msg)
-                is com.phucduong.searchgitprofile.data.Result.UnKnowError -> bindData(emptyList(), result.msg)
-            }
-        }
-    }
 
-    private fun bindData(UserList: List<User>, errorMsg: String?) {
-        _listUserInfo.value = UserList
-        errorText.value = errorMsg
-    }
-
-    fun checkRefreshCached() {
-        viewModelScope.launch {
-            UserRepository.checkRefreshCached()
+            if (result is Result.Success) {
+                currentList.addAll(result.data)
+                _listUserInfo.value = currentList
+            } else _error.value = result
         }
     }
 }

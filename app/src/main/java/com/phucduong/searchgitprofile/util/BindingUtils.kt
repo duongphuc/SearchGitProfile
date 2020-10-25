@@ -1,31 +1,19 @@
 package com.phucduong.searchgitprofile.util
 
-import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.ListView
+import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import com.phucduong.searchgitprofile.adapter.UserAdapter
-import com.phucduong.searchgitprofile.data.local.User
+import com.bumptech.glide.Glide
+import com.phucduong.searchgitprofile.R
 
 
 object BindingUtils {
-    @BindingAdapter("app:items")
+    @BindingAdapter("app:img")
     @JvmStatic
-    fun setItems(listView: ListView, list: List<User>) {
-        with(listView.adapter as UserAdapter) {
-            replaceData(list)
-            if (list.isNotEmpty()) listView.context.hideKeyboard(listView)
-        }
-    }
-
-    @JvmStatic
-    @BindingAdapter("onEditorEnterAction")
-    fun EditText.onEditorEnterAction(performSearch: () -> Unit) {
-        setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                performSearch()
-            }
-            true
-        }
+    fun loadImage(imageView: ImageView, url: String?) {
+        Glide.with(imageView.context)
+            .load(url)
+            .placeholder(R.drawable.ic_user)
+            .circleCrop()
+            .into(imageView)
     }
 }

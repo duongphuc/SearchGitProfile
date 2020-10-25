@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="com.phucduong.searchgitprofile.viewmodel.UserProfileViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            app:layout_constraintTop_toBottomOf="@id/back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/user_placeholder"
+            android:visibility="visible"
+            android:layout_margin="8dp"
+            app:img="@{viewModel.userProfile.avatarUrl}"
+            android:id="@+id/image"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:text="@{viewModel.userProfile.login}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:id="@+id/loginName"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/loginName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@{String.format(@string/name, viewModel.userProfile.name)}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:id="@+id/name"
+            android:layout_margin="16dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            app:layout_constraintStart_toStartOf="@id/name"
+            android:text="@{String.format(@string/email, viewModel.userProfile.email)}"
+            app:layout_constraintEnd_toEndOf="@id/name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:id="@+id/email"
+            android:layout_marginBottom="16dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/email"
+            app:layout_constraintStart_toStartOf="@id/email"
+            app:layout_constraintEnd_toEndOf="@id/email"
+            android:text="@{String.format(@string/location, viewModel.userProfile.location)}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:id="@+id/location"
+            android:layout_marginBottom="16dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/location"
+            app:layout_constraintStart_toStartOf="@id/location"
+            app:layout_constraintEnd_toEndOf="@id/location"
+            android:text="@{String.format(@string/following, viewModel.userProfile.following)}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:id="@+id/following"
+            android:layout_marginBottom="16dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/following"
+            app:layout_constraintStart_toStartOf="@id/following"
+            app:layout_constraintEnd_toEndOf="@id/following"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:text="@{String.format(@string/follower, viewModel.userProfile.followers)}"
+            android:id="@+id/follower"
+            android:layout_marginBottom="16dp"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="@{viewModel.loading ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/white">
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true"/>
+        </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

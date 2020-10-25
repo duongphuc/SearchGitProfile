@@ -1,9 +1,9 @@
 package com.phucduong.searchgitprofile.data
 
-import com.phucduong.searchgitprofile.data.local.User
+import com.phucduong.searchgitprofile.data.model.User
+import com.phucduong.searchgitprofile.data.model.UserProfile
 
 interface Repository {
-    suspend fun getUserListByKeyword(keyword: String): Result<List<User>>
-    suspend fun checkRefreshCached()
-    fun putDataToCached(keyword: String, listWeather: List<User>)
+    suspend fun searchUser(query: String, page: Int): Result<List<User>>
+    suspend fun getUserProfile(userName: String): Result<UserProfile>
 }

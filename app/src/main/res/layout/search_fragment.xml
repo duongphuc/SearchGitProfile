@@ -20,34 +20,22 @@
 
         <EditText
             android:id="@+id/search_keyword_input"
-            onEditorEnterAction="@{viewModel::getUserWithCurrentKeyword}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:imeOptions="actionSearch"
             android:inputType="text"
+            android:hint="@string/search_by_username"
             android:text="@={viewModel.searchKeyWord}"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:drawableLeft="@drawable/ic_search_green_24dp"
+            android:drawablePadding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/get_weather_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:enabled="@{viewModel.searchKeyWord.length() > 2 ? true : false}"
-            android:onClick="@{() -> viewModel.getUserWithCurrentKeyword()}"
-            android:text="tests"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/search_keyword_input" />
-
-        <ListView
-            android:id="@+id/weather_list_info"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/user_list_info"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
@@ -58,7 +46,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/get_weather_button" />
+            app:layout_constraintTop_toBottomOf="@id/search_keyword_input" />
 
         <ProgressBar
             android:id="@+id/loading"
@@ -68,19 +56,7 @@
             android:visibility="@{viewModel.loading ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/get_weather_button" />
-
-        <TextView
-            android:id="@+id/errorText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@{viewModel.errorText}"
-            android:visibility="@{viewModel.loading ? View.GONE : View.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/get_weather_button" />
-
+            app:layout_constraintTop_toBottomOf="@id/search_keyword_input" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

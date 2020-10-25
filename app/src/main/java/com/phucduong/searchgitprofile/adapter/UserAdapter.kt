@@ -1,39 +1,37 @@
 package com.phucduong.searchgitprofile.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import androidx.databinding.DataBindingUtil
-import com.phucduong.searchgitprofile.data.local.User
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.phucduong.searchgitprofile.data.model.User
 import com.phucduong.searchgitprofile.databinding.UserInfoItemBinding
 
-class UserAdapter constructor(
-    private var listUser: List<User>
-) : BaseAdapter() {
-    override fun getView(position: Int, view: View?, viewGroup: ViewGroup): View {
-        val binding: UserInfoItemBinding
-        binding = if (view == null) {
-            val inflater = LayoutInflater.from(viewGroup.context)
-            UserInfoItemBinding.inflate(inflater, viewGroup, false)
-        } else {
-            DataBindingUtil.getBinding(view) ?: throw IllegalAccessException()
-        }
-        with(binding) {
-            //info = listUser[position]
-            executePendingBindings()
-        }
-        return binding.root
+class UserAdapter constructor(val onClickListener: ItemOnClickListener?) :
+    ListAdapter<User, UserAdapter.UserViewHolder>(Companion) {
+    companion object : DiffUtil.ItemCallback<User>() {
+        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean = oldItem === newItem
+        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean =
+            oldItem.login == newItem.login
     }
 
-    override fun getItem(position: Int) = listUser[position]
+    class UserViewHolder(val binding: UserInfoItemBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun getItemId(position: Int) = position.toLong()
-
-    override fun getCount() = listUser.size
-
-    fun replaceData(listData: List<User>) {
-        listUser = listData
-        notifyDataSetChanged()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = UserInfoItemBinding.inflate(layoutInflater, parent, false)
+        return UserViewHolder(binding)
     }
+
+    override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
+        val currentUser = getItem(position)
+        holder.binding.user = currentUser
+        holder.binding.onClickListener = onClickListener
+        holder.binding.executePendingBindings()
+    }
+}
+
+interface ItemOnClickListener {
+    fun onClick(userLoginName: String)
 }
